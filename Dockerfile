@@ -48,7 +48,7 @@ RUN \
   composer global require consolidation/cgr && \
   cgr pantheon-systems/terminus
 
-ENV FRAMEWORK=drupal \
+ENV FRAMEWORK=drupal8 \
     PANTHEON_SITE=docksal \
     PANTHEON_ENVIRONMENT=docksal \
     PANTHEON_BINDING=docksal \
