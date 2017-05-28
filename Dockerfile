@@ -34,6 +34,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
   && apt-get -y autoremove \
   && rm -rf /var/lib/apt/lists/* && rm -rf && rm -rf /var/lib/cache/* && rm -rf /var/lib/log/* && rm -rf /tmp/*
 
+ENV PATH $PATH:$HOME/.composer/vendor/bin
+
 RUN \
   composer global require consolidation/cgr && \
   cgr terminus
