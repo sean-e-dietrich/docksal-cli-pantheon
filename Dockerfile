@@ -34,12 +34,19 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
   && apt-get -y autoremove \
   && rm -rf /var/lib/apt/lists/* && rm -rf && rm -rf /var/lib/cache/* && rm -rf /var/lib/log/* && rm -rf /tmp/*
 
-ENV PATH $PATH:$HOME/.composer/vendor/bin
+COPY config/php/php.ini /etc/php/7.0/fpm/php.ini
+COPY config/php/php-cli.ini /etc/php/7.0/cli/php.ini
+
+RUN mkdir -p /opt/php
+COPY config/php/prepend.php /opt/php/prepend.php
+
+COPY startup.sh /opt/startup_terminus.sh
+
+USER docker
 
 RUN \
   composer global require consolidation/cgr && \
-  cgr terminus
-
+  cgr pantheon-systems/terminus
 
 ENV FRAMEWORK=drupal \
     PANTHEON_SITE=docksal \
@@ -52,12 +59,6 @@ ENV FRAMEWORK=drupal \
     PANTHEON_DATABASE_DATABASE=default \
     DRUPAL_HASH_SALT="some random salt"
 
-COPY config/php/php.ini 
-COPY config/php/php-cli.ini
-
-RUN mkdir -p /opt/php
-COPY config/php/prepend.php /opt/php/prepend.php
-
-COPY startup.sh /opt/startup_terminus.sh
+USER root
 
 ENTRYPOINT ["/opt/startup_terminus.sh"]
