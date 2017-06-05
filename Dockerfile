@@ -37,18 +37,21 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 COPY config/php/php.ini /etc/php/7.0/fpm/php.ini
 COPY config/php/php-cli.ini /etc/php/7.0/cli/php.ini
 
+COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 RUN mkdir -p /opt/php
 COPY config/php/prepend.php /opt/php/prepend.php
 
-COPY startup.sh /opt/startup_terminus.sh
+COPY auth_terminus.sh /opt/auth_terminus.sh
+
+RUN chmod 777 /opt
 
 USER docker
 
-RUN \
-  composer global require consolidation/cgr && \
-  cgr pantheon-systems/terminus
+RUN composer create-project -d /opt --prefer-dist --no-dev pantheon-systems/terminus:^1
 
-ENV FRAMEWORK=drupal8 \
+ENV PATH="/opt/terminus/bin:${PATH}" \
+    FRAMEWORK=drupal8 \
     PANTHEON_SITE=docksal \
     PANTHEON_ENVIRONMENT=docksal \
     PANTHEON_BINDING=docksal \
@@ -58,7 +61,3 @@ ENV FRAMEWORK=drupal8 \
     PANTHEON_DATABASE_PASSWORD=user \
     PANTHEON_DATABASE_DATABASE=default \
     DRUPAL_HASH_SALT="some random salt"
-
-USER root
-
-ENTRYPOINT ["/opt/startup_terminus.sh"]

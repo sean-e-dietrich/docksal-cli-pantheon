@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+## Refresh database, files
+##
+## Usage: fin refresh
+
+# Abort if anything fails
+set -e
+
+DOCROOT_PATH="${PROJECT_ROOT}/${DOCROOT}"
+
+if [ [ "$FRAMEWORK" = 'drupal' ] || [ "$FRAMEWORK" == "drupal8" ] ]; then
+  SITEDIR_PATH="${DOCROOT_PATH}/sites/${SITE_DIRECTORY}"
+fi
+
+cd $SITEDIR_PATH
+
+# Rsync all files
+echo "Downloading latest set of files from ${PANTHEON_SITE}"
+terminus rsync ${PANTHEON_SITE}.${PANTHEON_ENV}:files .
+
+echo "Fixing files directory permissions"
+chmod -R 755 files
+
+DB=${PROJECT_ROOT}/db
+
+if [ ! -d $DB ]; then
+    mkdir $DB
+fi;
+
+echo 'Exporting latest database'
+rm -rf ${DB}/latest.sql.gz
+terminus backup:get ${PANTHEON_SITE}.${PANTHEON_ENV} --element=db --to=${DB}/latest.sql.gz
+
+fin reset db
+
+fin exec "if [ ! -d ~/tmp ]; then mkdir ~/tmp; fi"
+
+cd ${DOCROOT_PATH}
+
+sleep 5
+
+echo "Reseting user 1 password to admin"
+fin drush user-password admin --password=admin
+
