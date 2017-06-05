@@ -48,6 +48,10 @@ RUN chmod 777 /opt
 
 USER docker
 
+RUN mkdir ~/.drush && sudo chown -R docker:100 ~/.drush
+
+RUN mkdir ~/.terminus && sudo chown -R docker:100 ~/.drush
+
 RUN composer create-project -d /opt --prefer-dist --no-dev pantheon-systems/terminus:^1
 
 ENV PATH="/opt/terminus/bin:${PATH}" \
