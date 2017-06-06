@@ -114,9 +114,9 @@ if (
 ) {
 
   /* Connect to an ODBC database using driver invocation */
-  $dsn = 'mysql:dbname=' . $_ENV['PANTHEON_DATABASE_NAME'] . ';host=' . $_ENV['PANTHEON_DATABASE_HOST'] . ';port=' . $_ENV['PANTHEON_DATABASE_PORT'];
-  $user = $_ENV['PANTHEON_DATABASE_USERNAME'];
-  $password = $_ENV['PANTHEON_DATABASE_PASSWORD'];
+  $dsn = 'mysql:dbname=' . PANTHEON_DATABASE_DATABASE . ';host=' . PANTHEON_DATABASE_HOST . ';port=' . PANTHEON_DATABASE_HOST;
+  $user = PANTHEON_DATABASE_USERNAME;
+  $password = PANTHEON_DATABASE_PASSWORD;
 
   try {
     $dbh = new PDO($dsn, $user, $password);
