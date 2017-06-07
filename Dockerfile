@@ -48,7 +48,13 @@ RUN chmod 777 /opt
 
 USER docker
 
+# Install Terminus
 RUN composer create-project -d /opt --prefer-dist --no-dev pantheon-systems/terminus:^1
+
+RUN mkdir -p ~/.terminus/plugins
+
+# Install Terminus Rsync
+RUN composer create-project --no-dev -d ~/.terminus/plugins pantheon-systems/terminus-rsync-plugin:~1
 
 ENV PATH="/opt/terminus/bin:${PATH}" \
     FRAMEWORK=drupal8 \
